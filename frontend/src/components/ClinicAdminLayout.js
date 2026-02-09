@@ -8,7 +8,7 @@ const ClinicAdminLayout = ({ children }) => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <aside data-testid="clinic-admin-sidebar" className="sidebar" style={{ width: '260px', padding: '1.5rem' }}>
+      <aside data-testid="clinic-admin-sidebar" className="sidebar" style={{ width: '260px', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Activity size={32} color="hsl(199, 89%, 37%)" />
@@ -19,7 +19,7 @@ const ClinicAdminLayout = ({ children }) => {
           </div>
         </div>
 
-        <nav>
+        <nav style={{ flex: 1 }}>
           <NavLink data-testid="nav-clinic-dashboard" to="/clinic/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             <LayoutDashboard size={18} style={{ marginRight: '0.75rem' }} />
             Dashboard
@@ -38,7 +38,7 @@ const ClinicAdminLayout = ({ children }) => {
           </NavLink>
         </nav>
 
-        <button data-testid="clinic-logout-button" onClick={logout} className="sidebar-link" style={{ width: '100%', marginTop: 'auto', position: 'absolute', bottom: '1.5rem', left: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', fontSize: 'inherit' }}>
+        <button data-testid="clinic-logout-button" onClick={logout} className="sidebar-link" style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', fontSize: 'inherit' }}>
           <LogOut size={18} style={{ marginRight: '0.75rem' }} />
           Logout
         </button>
