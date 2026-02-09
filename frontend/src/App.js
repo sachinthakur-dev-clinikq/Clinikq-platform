@@ -1,50 +1,40 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import '@/App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import Login from './pages/Login';
+import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
+import ClinicsList from './pages/SuperAdmin/ClinicsList';
+import CreateClinic from './pages/SuperAdmin/CreateClinic';
+import EditClinic from './pages/SuperAdmin/EditClinic';
+import ClinicDashboard from './pages/ClinicAdmin/Dashboard';
+import PatientsList from './pages/ClinicAdmin/PatientsList';
+import AddPatient from './pages/ClinicAdmin/AddPatient';
+import AppointmentsList from './pages/ClinicAdmin/AppointmentsList';
+import BookAppointment from './pages/ClinicAdmin/BookAppointment';
+import ClinicSettings from './pages/ClinicAdmin/Settings';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          
+          {/* Super Admin Routes */}
+          <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
+          <Route path="/super-admin/clinics" element={<ClinicsList />} />
+          <Route path="/super-admin/clinics/new" element={<CreateClinic />} />
+          <Route path="/super-admin/clinics/:id/edit" element={<EditClinic />} />
+          
+          {/* Clinic Admin Routes */}
+          <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
+          <Route path="/clinic/patients" element={<PatientsList />} />
+          <Route path="/clinic/patients/new" element={<AddPatient />} />
+          <Route path="/clinic/appointments" element={<AppointmentsList />} />
+          <Route path="/clinic/appointments/new" element={<BookAppointment />} />
+          <Route path="/clinic/settings" element={<ClinicSettings />} />
         </Routes>
       </BrowserRouter>
     </div>
