@@ -1,34 +1,168 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.metric-card {
+  background: white;
+  border: 1px solid hsl(214, 32%, 91%);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.metric-card h3 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(215, 16%, 47%);
+  margin: 0 0 0.5rem 0;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.metric-card p {
+  font-size: 2rem;
+  font-weight: 600;
+  color: hsl(215, 20%, 15%);
+  margin: 0;
 }
 
-.App-link {
-    color: #61dafb;
+.sidebar {
+  background: hsl(210, 40%, 98%);
+  border-right: 1px solid hsl(214, 32%, 91%);
+  min-height: 100vh;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: hsl(215, 20%, 15%);
+  text-decoration: none;
+  border-radius: 0.375rem;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.sidebar-link:hover {
+  background: hsl(210, 40%, 96%);
+}
+
+.sidebar-link.active {
+  background: hsl(199, 89%, 37%);
+  color: white;
+}
+
+.btn-primary {
+  background: hsl(199, 89%, 37%);
+  color: white;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.btn-primary:hover {
+  background: hsl(199, 89%, 32%);
+}
+
+.btn-secondary {
+  background: white;
+  color: hsl(215, 20%, 15%);
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(214, 32%, 91%);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9375rem;
+}
+
+.btn-secondary:hover {
+  background: hsl(210, 40%, 96%);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: hsl(210, 40%, 98%);
+  border-bottom: 1px solid hsl(214, 32%, 91%);
+}
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: hsl(215, 20%, 15%);
+}
+
+.table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid hsl(214, 32%, 91%);
+  color: hsl(215, 16%, 47%);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: hsl(215, 20%, 15%);
+  font-size: 0.9375rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid hsl(214, 32%, 91%);
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: hsl(199, 89%, 37%);
+  box-shadow: 0 0 0 3px hsla(199, 89%, 37%, 0.1);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge-trial {
+  background: hsl(45, 93%, 87%);
+  color: hsl(25, 95%, 30%);
+}
+
+.badge-active {
+  background: hsl(142, 76%, 87%);
+  color: hsl(142, 71%, 25%);
+}
+
+.badge-suspended {
+  background: hsl(0, 84%, 90%);
+  color: hsl(0, 70%, 40%);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: hsl(215, 20%, 15%);
+  margin: 0;
 }
