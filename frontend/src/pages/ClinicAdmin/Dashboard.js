@@ -64,6 +64,38 @@ const ClinicDashboard = () => {
             <p>{metrics?.new_patients || 0}</p>
           </div>
 
+          <div data-testid="metric-total-patients" className="metric-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <h3>Total Patients</h3>
+              <Users size={20} color="hsl(199, 89%, 37%)" />
+            </div>
+            <p>{metrics?.total_patients || 0}</p>
+          </div>
+
+          <div data-testid="metric-walk-ins" className="metric-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <h3>Walk-ins Today</h3>
+              <UserCheck size={20} color="hsl(45, 93%, 47%)" />
+            </div>
+            <p>{metrics?.walk_ins || 0}</p>
+          </div>
+
+          <div data-testid="metric-pending-followups" className="metric-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <h3>Pending Follow-ups</h3>
+              <Clock size={20} color="hsl(25, 95%, 47%)" />
+            </div>
+            <p>{metrics?.pending_followups || 0}</p>
+          </div>
+
+          <div data-testid="metric-no-shows" className="metric-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <h3>No-shows</h3>
+              <AlertCircle size={20} color="hsl(0, 84%, 60%)" />
+            </div>
+            <p>{metrics?.no_shows || 0}</p>
+          </div>
+
           <div data-testid="metric-cancelled" className="metric-card">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <h3>Cancelled</h3>
