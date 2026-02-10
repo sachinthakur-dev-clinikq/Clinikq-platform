@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ClinicAdminLayout from '../../components/ClinicAdminLayout';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../api';
-import { Calendar, Users, UserPlus, XCircle, Phone, Eye } from 'lucide-react';
+import { Calendar, Users, UserPlus, XCircle, Phone, Eye, UserCheck, Clock, AlertCircle } from 'lucide-react';
 
 const ClinicDashboard = () => {
   useAuth();
