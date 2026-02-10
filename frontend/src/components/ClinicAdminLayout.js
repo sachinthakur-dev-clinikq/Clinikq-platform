@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut } from 'lucide-react';
+import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut, Stethoscope, Palette } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const ClinicAdminLayout = ({ children }) => {
