@@ -249,6 +249,88 @@ class ClinicDashboardMetrics(BaseModel):
     cancelled_appointments: int
     missed_calls: int
     website_visits: int
+    walk_ins: int
+    pending_followups: int
+    no_shows: int
+    total_patients: int
+
+# Phase 2 Models
+
+# Doctor Models
+class DoctorCreate(BaseModel):
+    name: str
+    speciality: str
+    consultation_fee: float
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+
+class Doctor(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    clinic_id: str
+    name: str
+    speciality: str
+    consultation_fee: float
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    is_active: bool
+    created_at: str
+
+class DoctorUpdate(BaseModel):
+    name: Optional[str] = None
+    speciality: Optional[str] = None
+    consultation_fee: Optional[float] = None
+    phone: Optional[str] = None
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = None
+
+# Branding Models
+class ClinicBranding(BaseModel):
+    clinic_id: str
+    display_name: Optional[str] = None
+    brand_color: str = "#0284C7"  # Default blue
+    logo_path: Optional[str] = None
+    address: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[EmailStr] = None
+
+class ClinicBrandingUpdate(BaseModel):
+    display_name: Optional[str] = None
+    brand_color: Optional[str] = None
+    address: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[EmailStr] = None
+
+# Visit History Model
+class VisitHistory(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    patient_id: str
+    clinic_id: str
+    appointment_id: str
+    visit_date: str
+    doctor_name: Optional[str] = None
+    notes: Optional[str] = None
+
+# Appointment Reschedule Model
+class AppointmentReschedule(BaseModel):
+    new_slot_time: str
+
+# Walk-ins Model
+class WalkInCreate(BaseModel):
+    patient_id: Optional[str] = None
+    patient_name: str
+    patient_phone: str
+
+class WalkIn(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    clinic_id: str
+    patient_id: Optional[str] = None
+    patient_name: str
+    patient_phone: str
+    walk_in_time: str
+    created_at: str
 
 # ============ ROUTES ============
 
