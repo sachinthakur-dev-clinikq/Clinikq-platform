@@ -9,16 +9,32 @@ const PatientsList = () => {
   useAuth();
   const navigate = useNavigate();
   const [patients, setPatients] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadPatients();
   }, []);
 
+  useEffect(() => {
+    // Filter patients based on search query
+    if (searchQuery.trim() === '') {
+      setFilteredPatients(patients);
+    } else {
+      const filtered = patients.filter(patient =>
+        patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        patient.phone.includes(searchQuery)
+      );
+      setFilteredPatients(filtered);
+    }
+  }, [searchQuery, patients]);
+
   const loadPatients = async () => {
     try {
       const response = await api.get('/clinic-admin/patients');
       setPatients(response.data);
+      setFilteredPatients(response.data);
     } catch (error) {
       console.error('Failed to load patients:', error);
     } finally {
