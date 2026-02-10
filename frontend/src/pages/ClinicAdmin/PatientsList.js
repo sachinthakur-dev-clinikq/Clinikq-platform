@@ -53,9 +53,28 @@ const PatientsList = () => {
           </button>
         </div>
 
+        {/* Search Bar */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <input
+            data-testid="patient-search-input"
+            type="text"
+            placeholder="Search patients by name or phone..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              maxWidth: '500px',
+              padding: '0.75rem 1rem',
+              border: '1px solid hsl(214, 32%, 91%)',
+              borderRadius: '0.375rem',
+              fontSize: '0.9375rem'
+            }}
+          />
+        </div>
+
         {loading ? (
           <div data-testid="patients-loading">Loading patients...</div>
-        ) : patients.length === 0 ? (
+        ) : filteredPatients.length === 0 && patients.length === 0 ? (
           <div data-testid="no-patients" style={{ background: 'white', padding: '3rem', textAlign: 'center', borderRadius: '0.5rem', border: '1px solid hsl(214, 32%, 91%)' }}>
             <p style={{ color: 'hsl(215, 16%, 47%)', marginBottom: '1.5rem' }}>No patients added yet</p>
             <button className="btn-primary" onClick={() => navigate('/clinic/patients/new')}>
