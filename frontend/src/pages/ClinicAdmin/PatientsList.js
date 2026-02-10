@@ -81,6 +81,10 @@ const PatientsList = () => {
               Add First Patient
             </button>
           </div>
+        ) : filteredPatients.length === 0 ? (
+          <div data-testid="no-search-results" style={{ background: 'white', padding: '2rem', textAlign: 'center', borderRadius: '0.5rem', border: '1px solid hsl(214, 32%, 91%)' }}>
+            <p style={{ color: 'hsl(215, 16%, 47%)' }}>No patients found matching "{searchQuery}"</p>
+          </div>
         ) : (
           <div style={{ background: 'white', borderRadius: '0.5rem', border: '1px solid hsl(214, 32%, 91%)', overflow: 'hidden' }}>
             <table data-testid="patients-table" className="table">
@@ -96,7 +100,7 @@ const PatientsList = () => {
                 </tr>
               </thead>
               <tbody>
-                {patients.map((patient) => (
+                {filteredPatients.map((patient) => (
                   <tr key={patient.id} data-testid={`patient-row-${patient.id}`}>
                     <td style={{ fontWeight: '500', color: 'hsl(215, 20%, 15%)' }}>{patient.name}</td>
                     <td>{patient.phone}</td>
