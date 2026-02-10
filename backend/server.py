@@ -791,6 +791,199 @@ async def upload_qr_code(file: UploadFile = File(...), user = Depends(require_ro
     
     return {"path": qr_path}
 
+# ============ PHASE 2 ROUTES ============
+
+# Doctor Management Routes
+@api_router.get("/clinic-admin/doctors", response_model=List[Doctor])
+async def get_doctors(user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    doctors = await db.doctors.find({"clinic_id": clinic_id}, {"_id": 0}).to_list(1000)
+    return doctors
+
+@api_router.post("/clinic-admin/doctors", response_model=Doctor)
+async def create_doctor(doctor: DoctorCreate, user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    doctor_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    doctor_doc = {
+        "id": doctor_id,
+        "clinic_id": clinic_id,
+        **doctor.model_dump(),
+        "is_active": True,
+        "created_at": now.isoformat()
+    }
+    
+    await db.doctors.insert_one(doctor_doc)
+    return Doctor(**doctor_doc)
+
+@api_router.put("/clinic-admin/doctors/{doctor_id}", response_model=Doctor)
+async def update_doctor(doctor_id: str, updates: DoctorUpdate, user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    doctor = await db.doctors.find_one({"id": doctor_id, "clinic_id": clinic_id})
+    if not doctor:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+    
+    update_data = {k: v for k, v in updates.model_dump().items() if v is not None}
+    
+    if update_data:
+        await db.doctors.update_one({"id": doctor_id}, {"$set": update_data})
+    
+    updated_doctor = await db.doctors.find_one({"id": doctor_id}, {"_id": 0})
+    return Doctor(**updated_doctor)
+
+# Branding Routes
+@api_router.get("/clinic-admin/branding")
+async def get_branding(user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    branding = await db.clinic_branding.find_one({"clinic_id": clinic_id}, {"_id": 0})
+    
+    if not branding:
+        # Create default branding
+        clinic = await db.clinics.find_one({"id": clinic_id}, {"_id": 0})
+        branding = {
+            "clinic_id": clinic_id,
+            "display_name": clinic.get("clinic_name") if clinic else None,
+            "brand_color": "#0284C7",
+            "logo_path": None,
+            "address": None,
+            "contact_phone": clinic.get("phone") if clinic else None,
+            "contact_email": clinic.get("email") if clinic else None
+        }
+        await db.clinic_branding.insert_one(branding)
+    
+    return branding
+
+@api_router.put("/clinic-admin/branding")
+async def update_branding(updates: ClinicBrandingUpdate, user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    
+    update_data = {k: v for k, v in updates.model_dump().items() if v is not None}
+    
+    if update_data:
+        await db.clinic_branding.update_one(
+            {"clinic_id": clinic_id},
+            {"$set": update_data},
+            upsert=True
+        )
+    
+    branding = await db.clinic_branding.find_one({"clinic_id": clinic_id}, {"_id": 0})
+    return branding
+
+@api_router.post("/clinic-admin/branding/logo")
+async def upload_clinic_logo(file: UploadFile = File(...), user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    
+    # Create uploads directory
+    upload_dir = Path("/app/backend/uploads/clinic-logos")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = Path(file.filename).suffix
+    filename = f"{clinic_id}{file_extension}"
+    file_path = upload_dir / filename
+    
+    # Save file
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Update branding
+    logo_path = f"/uploads/clinic-logos/{filename}"
+    await db.clinic_branding.update_one(
+        {"clinic_id": clinic_id},
+        {"$set": {"logo_path": logo_path}},
+        upsert=True
+    )
+    
+    return {"path": logo_path}
+
+# Visit History Routes
+@api_router.get("/clinic-admin/patients/{patient_id}/visits", response_model=List[VisitHistory])
+async def get_patient_visits(patient_id: str, user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    
+    # Get appointments for this patient that are completed
+    appointments = await db.appointments.find({
+        "clinic_id": clinic_id,
+        "patient_id": patient_id,
+        "status": "completed"
+    }, {"_id": 0}).to_list(1000)
+    
+    visits = []
+    for appt in appointments:
+        visit = {
+            "id": appt["id"],
+            "patient_id": patient_id,
+            "clinic_id": clinic_id,
+            "appointment_id": appt["id"],
+            "visit_date": appt["slot_time"],
+            "doctor_name": None,  # Can be extended later
+            "notes": None
+        }
+        visits.append(VisitHistory(**visit))
+    
+    return visits
+
+# Appointment Reschedule
+@api_router.post("/clinic-admin/appointments/{appointment_id}/reschedule", response_model=Appointment)
+async def reschedule_appointment(
+    appointment_id: str, 
+    reschedule: AppointmentReschedule, 
+    user = Depends(require_role("clinic_admin"))
+):
+    clinic_id = user["clinic_id"]
+    appointment = await db.appointments.find_one({"id": appointment_id, "clinic_id": clinic_id})
+    
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    # Update the slot time
+    await db.appointments.update_one(
+        {"id": appointment_id},
+        {"$set": {"slot_time": reschedule.new_slot_time}}
+    )
+    
+    updated_appointment = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
+    
+    # Get patient name
+    patient = await db.patients.find_one({"id": updated_appointment["patient_id"]}, {"_id": 0})
+    if patient:
+        updated_appointment["patient_name"] = patient["name"]
+    
+    return Appointment(**updated_appointment)
+
+# Walk-ins Routes
+@api_router.post("/clinic-admin/walk-ins", response_model=WalkIn)
+async def create_walk_in(walk_in: WalkInCreate, user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    walk_in_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    walk_in_doc = {
+        "id": walk_in_id,
+        "clinic_id": clinic_id,
+        **walk_in.model_dump(),
+        "walk_in_time": now.isoformat(),
+        "created_at": now.isoformat()
+    }
+    
+    await db.walk_ins.insert_one(walk_in_doc)
+    return WalkIn(**walk_in_doc)
+
+@api_router.get("/clinic-admin/walk-ins", response_model=List[WalkIn])
+async def get_walk_ins(user = Depends(require_role("clinic_admin"))):
+    clinic_id = user["clinic_id"]
+    now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # Get today's walk-ins
+    walk_ins = await db.walk_ins.find({
+        "clinic_id": clinic_id,
+        "walk_in_time": {"$gte": today_start.isoformat()}
+    }, {"_id": 0}).to_list(1000)
+    
+    return walk_ins
+
 # Include router
 app.include_router(api_router)
 
