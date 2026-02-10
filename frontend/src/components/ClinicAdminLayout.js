@@ -32,6 +32,14 @@ const ClinicAdminLayout = ({ children }) => {
             <Calendar size={18} style={{ marginRight: '0.75rem' }} />
             Appointments
           </NavLink>
+          <NavLink data-testid="nav-doctors" to="/clinic/doctors" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            <Stethoscope size={18} style={{ marginRight: '0.75rem' }} />
+            Doctors
+          </NavLink>
+          <NavLink data-testid="nav-branding" to="/clinic/branding" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            <Palette size={18} style={{ marginRight: '0.75rem' }} />
+            Branding
+          </NavLink>
           <NavLink data-testid="nav-settings" to="/clinic/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             <Settings size={18} style={{ marginRight: '0.75rem' }} />
             Settings
