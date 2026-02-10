@@ -13,6 +13,8 @@ import AddPatient from './pages/ClinicAdmin/AddPatient';
 import AppointmentsList from './pages/ClinicAdmin/AppointmentsList';
 import BookAppointment from './pages/ClinicAdmin/BookAppointment';
 import ClinicSettings from './pages/ClinicAdmin/Settings';
+import DoctorsList from './pages/ClinicAdmin/Doctors';
+import Branding from './pages/ClinicAdmin/Branding';
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           <Route path="/clinic/patients/new" element={<AddPatient />} />
           <Route path="/clinic/appointments" element={<AppointmentsList />} />
           <Route path="/clinic/appointments/new" element={<BookAppointment />} />
+          <Route path="/clinic/doctors" element={<DoctorsList />} />
+          <Route path="/clinic/branding" element={<Branding />} />
           <Route path="/clinic/settings" element={<ClinicSettings />} />
         </Routes>
       </BrowserRouter>
