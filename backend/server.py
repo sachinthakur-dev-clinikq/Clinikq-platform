@@ -572,13 +572,41 @@ async def get_clinic_dashboard(user = Depends(require_role("clinic_admin"))):
         "status": "cancelled"
     })
     
+    # Phase 2: Enhanced metrics
+    no_shows = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "status": "no_show"
+    })
+    
+    # Walk-ins today
+    walk_ins_today = await db.walk_ins.count_documents({
+        "clinic_id": clinic_id,
+        "walk_in_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        }
+    })
+    
+    # Pending follow-ups (appointments in past 30 days that need follow-up)
+    pending_followups = 0  # Placeholder for now
+    
+    # Total patients
+    total_patients = await db.patients.count_documents({
+        "clinic_id": clinic_id,
+        "is_active": True
+    })
+    
     return ClinicDashboardMetrics(
         today_appointments=today_appointments,
         upcoming_appointments=upcoming_appointments,
         new_patients=new_patients,
         cancelled_appointments=cancelled_appointments,
         missed_calls=0,  # Placeholder
-        website_visits=0  # Placeholder
+        website_visits=0,  # Placeholder
+        walk_ins=walk_ins_today,
+        pending_followups=pending_followups,
+        no_shows=no_shows,
+        total_patients=total_patients
     )
 
 # Patient Routes
