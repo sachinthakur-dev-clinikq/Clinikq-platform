@@ -854,6 +854,29 @@ async def get_branding(user = Depends(require_role("clinic_admin"))):
     
     return branding
 
+@api_router.get("/public/clinic-branding/{slug}")
+async def get_clinic_branding_public(slug: str):
+    """Public endpoint to fetch clinic branding by slug for white-label login"""
+    clinic = await db.clinics.find_one({"slug": slug}, {"_id": 0})
+    if not clinic:
+        raise HTTPException(status_code=404, detail="Clinic not found")
+    
+    branding = await db.clinic_branding.find_one({"clinic_id": clinic["id"]}, {"_id": 0})
+    
+    if not branding:
+        # Return default branding
+        return {
+            "display_name": clinic.get("clinic_name"),
+            "brand_color": "#0284C7",
+            "logo_path": None
+        }
+    
+    return {
+        "display_name": branding.get("display_name") or clinic.get("clinic_name"),
+        "brand_color": branding.get("brand_color", "#0284C7"),
+        "logo_path": branding.get("logo_path")
+    }
+
 @api_router.put("/clinic-admin/branding")
 async def update_branding(updates: ClinicBrandingUpdate, user = Depends(require_role("clinic_admin"))):
     clinic_id = user["clinic_id"]
