@@ -273,9 +273,11 @@ class TestPhase3AppointmentCreationAndDoublBooking:
         
         patient_id = patients[0]["id"]
         
-        # Create appointment for tomorrow at 10:00 AM
-        tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-        slot_time = f"{tomorrow}T10:00:00+00:00"
+        # Create appointment for 7 days from now at a unique time to avoid conflicts
+        import random
+        future_date = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
+        random_minute = random.randint(0, 59)
+        slot_time = f"{future_date}T09:{random_minute:02d}:00+00:00"
         
         response = authenticated_clinic_admin.post(
             f"{BASE_URL}/api/clinic-admin/appointments",
@@ -298,8 +300,6 @@ class TestPhase3AppointmentCreationAndDoublBooking:
         
         print(f"Created appointment: {appointment['id']}")
         print(f"Slot: {appointment['slot_time']}, End: {appointment['end_time']}")
-        
-        return appointment
     
     def test_double_booking_prevention(self, authenticated_clinic_admin):
         """Test that double booking is prevented"""
@@ -314,9 +314,12 @@ class TestPhase3AppointmentCreationAndDoublBooking:
         patient_id_1 = patients[0]["id"]
         patient_id_2 = patients[1]["id"] if len(patients) > 1 else patients[0]["id"]
         
-        # Create first appointment for a specific time (day after tomorrow to avoid conflicts)
-        future_date = (datetime.now() + timedelta(days=3)).strftime("%Y-%m-%d")
-        slot_time = f"{future_date}T14:00:00+00:00"
+        # Use a very specific unique time slot far in the future to avoid conflicts
+        import random
+        future_date = (datetime.now() + timedelta(days=14)).strftime("%Y-%m-%d")
+        unique_hour = 15  # 3 PM
+        unique_minute = random.randint(0, 30)
+        slot_time = f"{future_date}T{unique_hour}:{unique_minute:02d}:00+00:00"
         
         # First appointment should succeed
         response1 = authenticated_clinic_admin.post(
