@@ -10,6 +10,7 @@ const CreateClinic = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [activationLink, setActivationLink] = useState('');
   
   const [formData, setFormData] = useState({
     clinic_name: '',
@@ -21,7 +22,9 @@ const CreateClinic = () => {
     slot_duration: 20,
     subscription_status: 'trial',
     setup_fee: 0,
-    monthly_fee: 0
+    monthly_fee: 0,
+    brand_color: '#0284C7',
+    address: ''
   });
 
   const handleChange = (e) => {
@@ -35,7 +38,10 @@ const CreateClinic = () => {
     setLoading(true);
 
     try {
-      await api.post('/super-admin/clinics', formData);
+      const response = await api.post('/super-admin/clinics', formData);
+      setActivationLink(response.data.activation_link);
+      // Show success message with activation link
+      alert(`Clinic created successfully!\n\nActivation Link: ${response.data.activation_link}\n\nThis link should be sent to: ${formData.email}`);
       navigate('/super-admin/clinics');
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to create clinic');
