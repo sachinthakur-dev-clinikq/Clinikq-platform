@@ -857,6 +857,73 @@ async def create_appointment(appointment: AppointmentCreate, user = Depends(requ
     result.patient_name = patient["name"]
     return result
 
+# Phase 3: Slot Suggestion Endpoint
+@api_router.get("/clinic-admin/appointments/available-slots", response_model=List[SlotSuggestion])
+async def get_available_slots(
+    date: str,  # Format: YYYY-MM-DD
+    consultation_duration: int = 15,
+    buffer_duration: int = 5,
+    user = Depends(require_role("clinic_admin"))
+):
+    """Get available appointment slots for a given date"""
+    clinic_id = user["clinic_id"]
+    
+    # Get clinic settings for slot duration (fallback to request params)
+    clinic = await db.clinics.find_one({"id": clinic_id}, {"_id": 0})
+    clinic_slot_duration = clinic.get("slot_duration", consultation_duration) if clinic else consultation_duration
+    
+    # Parse date and set business hours (9 AM to 6 PM)
+    try:
+        target_date = datetime.fromisoformat(f"{date}T00:00:00+00:00")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+    
+    business_start = target_date.replace(hour=9, minute=0)
+    business_end = target_date.replace(hour=18, minute=0)
+    
+    # Get existing appointments for this date
+    day_start = target_date.replace(hour=0, minute=0, second=0)
+    day_end = target_date.replace(hour=23, minute=59, second=59)
+    
+    existing_appointments = await db.appointments.find({
+        "clinic_id": clinic_id,
+        "status": {"$nin": ["cancelled", "no_show"]},
+        "slot_time": {
+            "$gte": day_start.isoformat(),
+            "$lte": day_end.isoformat()
+        }
+    }, {"_id": 0}).to_list(1000)
+    
+    # Generate available slots
+    slots = []
+    total_duration = clinic_slot_duration + buffer_duration
+    current_slot = business_start
+    
+    while current_slot + timedelta(minutes=total_duration) <= business_end:
+        slot_end = current_slot + timedelta(minutes=clinic_slot_duration)
+        
+        # Check if slot overlaps with any existing appointment
+        is_available = True
+        for appt in existing_appointments:
+            appt_start = datetime.fromisoformat(appt.get("start_time", appt["slot_time"]).replace('Z', '+00:00'))
+            appt_end = datetime.fromisoformat(appt.get("end_time", appt["slot_time"]).replace('Z', '+00:00'))
+            
+            # Check for overlap
+            if not (slot_end <= appt_start or current_slot >= appt_end):
+                is_available = False
+                break
+        
+        slots.append(SlotSuggestion(
+            slot_time=current_slot.isoformat(),
+            start_time=current_slot.isoformat(),
+            end_time=slot_end.isoformat(),
+            available=is_available
+        ))
+        
+        current_slot += timedelta(minutes=total_duration)
+    
+    return slots
+
 @api_router.put("/clinic-admin/appointments/{appointment_id}", response_model=Appointment)
 async def update_appointment(appointment_id: str, updates: AppointmentUpdate, user = Depends(require_role("clinic_admin"))):
     clinic_id = user["clinic_id"]
