@@ -211,6 +211,31 @@ const CreateClinic = () => {
                   onChange={handleChange}
                 />
               </div>
+
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label htmlFor="address">Address</label>
+                <textarea
+                  data-testid="input-address"
+                  id="address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  rows="2"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="brand_color">Brand Color</label>
+                <input
+                  data-testid="input-brand-color"
+                  id="brand_color"
+                  name="brand_color"
+                  type="color"
+                  value={formData.brand_color}
+                  onChange={handleChange}
+                  style={{ height: '60px', cursor: 'pointer' }}
+                />
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
