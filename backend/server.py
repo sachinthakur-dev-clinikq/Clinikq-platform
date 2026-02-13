@@ -116,6 +116,9 @@ class ClinicCreate(BaseModel):
     subscription_status: Literal["trial", "active", "suspended"] = "trial"
     setup_fee: float = 0
     monthly_fee: float = 0
+    # Phase 2.6: Branding fields
+    brand_color: Optional[str] = "#0284C7"
+    address: Optional[str] = None
 
 class Clinic(BaseModel):
     model_config = ConfigDict(extra="ignore")
