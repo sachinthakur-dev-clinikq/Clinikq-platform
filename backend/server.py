@@ -943,6 +943,22 @@ async def get_branding(user = Depends(require_role("clinic_admin"))):
     
     return branding
 
+# Phase 2.6: Get clinic branding for current user (for sidebar)
+@api_router.get("/clinic-admin/my-branding")
+async def get_my_clinic_branding(user = Depends(require_role("clinic_admin"))):
+    """Get clinic branding for authenticated clinic admin (for sidebar logo)"""
+    clinic_id = user["clinic_id"]
+    branding = await db.clinic_branding.find_one({"clinic_id": clinic_id}, {"_id": 0})
+    
+    if not branding:
+        return {"logo_path": None, "display_name": "CliniKQ", "brand_color": "#0284C7"}
+    
+    return {
+        "logo_path": branding.get("logo_path"),
+        "display_name": branding.get("display_name", "CliniKQ"),
+        "brand_color": branding.get("brand_color", "#0284C7")
+    }
+
 @api_router.get("/public/clinic-branding/{slug}")
 async def get_clinic_branding_public(slug: str):
     """Public endpoint to fetch clinic branding by slug for white-label login"""
