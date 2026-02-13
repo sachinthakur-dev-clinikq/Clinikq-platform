@@ -570,11 +570,11 @@ async def create_clinic(clinic: ClinicCreate, user = Depends(require_role("super
     activation_link = f"/clinicpartner/set-password?token={activation_token}"
     
     # Mock email sending (console log for now)
-    print(f"=== ACTIVATION EMAIL ===")
+    print("=== ACTIVATION EMAIL ===")
     print(f"To: {clinic.email}")
-    print(f"Subject: Activate Your CliniKQ Account")
+    print("Subject: Activate Your CliniKQ Account")
     print(f"Activation Link: {activation_link}")
-    print(f"=======================")
+    print("=======================")
     
     # Create default settings
     settings_doc = {
