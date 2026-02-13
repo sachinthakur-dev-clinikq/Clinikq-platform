@@ -785,15 +785,72 @@ async def create_appointment(appointment: AppointmentCreate, user = Depends(requ
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     
+    # Phase 3: Calculate start and end times
+    slot_datetime = datetime.fromisoformat(appointment.slot_time.replace('Z', '+00:00'))
+    consultation_duration = appointment.consultation_duration or 15
+    buffer_duration = appointment.buffer_duration or 5
+    
+    start_time = slot_datetime
+    end_time = start_time + timedelta(minutes=consultation_duration)
+    total_slot_end = end_time + timedelta(minutes=buffer_duration)
+    
+    # Phase 3: Check for double booking (prevent overlapping appointments)
+    overlapping = await db.appointments.find_one({
+        "clinic_id": clinic_id,
+        "status": {"$nin": ["cancelled", "no_show"]},
+        "$or": [
+            {
+                "start_time": {"$lte": end_time.isoformat()},
+                "end_time": {"$gte": start_time.isoformat()}
+            }
+        ]
+    })
+    
+    if overlapping:
+        raise HTTPException(status_code=400, detail="Time slot already booked. Please choose another time.")
+    
     appointment_doc = {
         "id": appointment_id,
         "clinic_id": clinic_id,
-        **appointment.model_dump(),
+        "patient_id": appointment.patient_id,
+        "slot_time": appointment.slot_time,
+        "start_time": start_time.isoformat(),
+        "end_time": end_time.isoformat(),
+        "is_teleconsult": appointment.is_teleconsult,
         "status": "booked",
         "created_at": now.isoformat()
     }
     
     await db.appointments.insert_one(appointment_doc)
+    
+    # Phase 3: Create notification events
+    # T-1 day reminder
+    reminder_1day = slot_datetime - timedelta(days=1)
+    if reminder_1day > now:
+        await db.notification_events.insert_one({
+            "id": str(uuid.uuid4()),
+            "event_type": "appointment_reminder_1day",
+            "appointment_id": appointment_id,
+            "patient_id": appointment.patient_id,
+            "clinic_id": clinic_id,
+            "scheduled_time": reminder_1day.isoformat(),
+            "status": "pending",
+            "created_at": now.isoformat()
+        })
+    
+    # T-10 minutes reminder
+    reminder_10min = slot_datetime - timedelta(minutes=10)
+    if reminder_10min > now:
+        await db.notification_events.insert_one({
+            "id": str(uuid.uuid4()),
+            "event_type": "appointment_reminder_10min",
+            "appointment_id": appointment_id,
+            "patient_id": appointment.patient_id,
+            "clinic_id": clinic_id,
+            "scheduled_time": reminder_10min.isoformat(),
+            "status": "pending",
+            "created_at": now.isoformat()
+        })
     
     result = Appointment(**appointment_doc)
     result.patient_name = patient["name"]
