@@ -103,7 +103,7 @@ class TestBugFix2SetPasswordPage:
     
     def test_verify_activation_token_valid(self, api_client):
         """Test GET /api/public/verify-token/{token} with valid token"""
-        token = "cbd0d7a5-d24b-4076-9f9d-48264b8234af"
+        token = "fresh-test-token-for-testing"
         response = api_client.get(f"{BASE_URL}/api/public/verify-token/{token}")
         
         assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
@@ -127,7 +127,7 @@ class TestBugFix2SetPasswordPage:
         """Test POST /api/public/set-password with valid token"""
         # Note: This test will use up the activation token
         # After this test, the user will be activated
-        token = "cbd0d7a5-d24b-4076-9f9d-48264b8234af"
+        token = "fresh-test-token-for-testing"
         password = "TestPassword@123"
         
         response = api_client.post(f"{BASE_URL}/api/public/set-password", json={
