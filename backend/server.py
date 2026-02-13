@@ -281,6 +281,34 @@ class ClinicDashboardMetrics(BaseModel):
     no_shows: int
     total_patients: int
 
+# Phase 3: Enhanced Dashboard Models
+class TodayScheduleItem(BaseModel):
+    id: str
+    patient_name: str
+    slot_time: str
+    status: str
+    is_teleconsult: bool
+
+class RecentPatientItem(BaseModel):
+    id: str
+    name: str
+    phone: str
+    created_at: str
+
+class EnhancedDashboardResponse(BaseModel):
+    # Basic metrics
+    today_appointments: int
+    upcoming_appointments: int
+    completed_today: int
+    no_shows_today: int
+    total_patients: int
+    new_patients: int
+    cancelled_appointments: int
+    walk_ins: int
+    # Lists for intelligent dashboard
+    todays_schedule: List[TodayScheduleItem]
+    recent_patients: List[RecentPatientItem]
+
 # Phase 2 Models
 
 # Doctor Models
