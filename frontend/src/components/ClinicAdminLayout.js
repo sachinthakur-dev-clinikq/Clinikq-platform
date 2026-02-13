@@ -1,19 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut, Stethoscope, Palette } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import api from '../api';
 
 const ClinicAdminLayout = ({ children }) => {
   const { logout } = useAuth();
+  const [branding, setBranding] = useState(null);
+
+  useEffect(() => {
+    loadBranding();
+  }, []);
+
+  const loadBranding = async () => {
+    try {
+      const response = await api.get('/clinic-admin/my-branding');
+      setBranding(response.data);
+    } catch (error) {
+      console.error('Failed to load branding:', error);
+    }
+  };
+
+  const displayLogo = branding?.logo_path;
+  const displayName = branding?.display_name || 'CliniKQ';
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <aside data-testid="clinic-admin-sidebar" className="sidebar" style={{ width: '260px', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Activity size={32} color="hsl(199, 89%, 37%)" />
+            {displayLogo ? (
+              <img 
+                src={displayLogo} 
+                alt={displayName}
+                style={{ maxWidth: '40px', maxHeight: '40px', objectFit: 'contain' }}
+                data-testid="clinic-sidebar-logo"
+              />
+            ) : (
+              <Activity size={32} color="hsl(199, 89%, 37%)" data-testid="default-sidebar-logo" />
+            )}
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600' }}>CliniKQ</h2>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600' }}>{displayName}</h2>
               <p style={{ margin: 0, fontSize: '0.75rem', color: 'hsl(215, 16%, 47%)' }}>Clinic Admin</p>
             </div>
           </div>
