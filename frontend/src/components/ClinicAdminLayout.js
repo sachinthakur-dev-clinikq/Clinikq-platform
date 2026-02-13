@@ -4,6 +4,8 @@ import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut, Stethosco
 import { useAuth } from '../hooks/useAuth';
 import api from '../api';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ClinicAdminLayout = ({ children }) => {
   const { logout } = useAuth();
   const [branding, setBranding] = useState(null);
@@ -21,7 +23,8 @@ const ClinicAdminLayout = ({ children }) => {
     }
   };
 
-  const displayLogo = branding?.logo_path;
+  // Build full logo URL - logo_path from backend is relative (e.g., /uploads/clinic-logos/...)
+  const displayLogo = branding?.logo_path ? `${BACKEND_URL}${branding.logo_path}` : null;
   const displayName = branding?.display_name || 'CliniKQ';
 
   return (
