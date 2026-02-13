@@ -378,6 +378,52 @@ async def get_me(user = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="User not found")
     return UserInfo(**user_data)
 
+# Phase 2.6: Password Setup Endpoint (Public - No Auth Required)
+@api_router.post("/public/set-password")
+async def set_password(request: SetPasswordRequest):
+    """Allow clinic admin to set password using activation token"""
+    user = await db.users.find_one({"activation_token": request.token, "activation_status": "pending"})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Invalid or expired activation token")
+    
+    # Set password and activate account
+    hashed_password = hash_password(request.password)
+    
+    await db.users.update_one(
+        {"id": user["id"]},
+        {
+            "$set": {
+                "password": hashed_password,
+                "activation_status": "active",
+                "activated_at": datetime.now(timezone.utc).isoformat()
+            },
+            "$unset": {"activation_token": ""}  # Remove token after use
+        }
+    )
+    
+    return {"message": "Password set successfully. You can now login."}
+
+# Phase 2.6: Verify Activation Token (Public - No Auth Required)
+@api_router.get("/public/verify-token/{token}")
+async def verify_activation_token(token: str):
+    """Verify if activation token is valid"""
+    user = await db.users.find_one({"activation_token": token, "activation_status": "pending"}, {"_id": 0})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Invalid or expired activation token")
+    
+    # Get clinic info
+    clinic = await db.clinics.find_one({"id": user["clinic_id"]}, {"_id": 0})
+    
+    return {
+        "valid": True,
+        "email": user["email"],
+        "name": user["name"],
+        "clinic_name": clinic.get("clinic_name") if clinic else None,
+        "clinic_slug": clinic.get("slug") if clinic else None
+    }
+
 # Super Admin Routes
 @api_router.get("/super-admin/dashboard", response_model=DashboardMetrics)
 async def get_super_admin_dashboard(user = Depends(require_role("super_admin"))):
