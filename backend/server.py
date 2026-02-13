@@ -1150,7 +1150,7 @@ async def upload_logo(file: UploadFile = File(...), user = Depends(get_current_u
     with file_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    return {"path": f"/uploads/logos/{filename}"}
+    return {"path": f"/api/uploads/logos/{filename}"}
 
 @api_router.post("/uploads/qr-code")
 async def upload_qr_code(file: UploadFile = File(...), user = Depends(require_role("clinic_admin"))):
@@ -1168,7 +1168,7 @@ async def upload_qr_code(file: UploadFile = File(...), user = Depends(require_ro
         shutil.copyfileobj(file.file, buffer)
     
     # Update settings
-    qr_path = f"/uploads/qr-codes/{filename}"
+    qr_path = f"/api/uploads/qr-codes/{filename}"
     await db.clinic_settings.update_one(
         {"clinic_id": user["clinic_id"]},
         {"$set": {"qr_code_path": qr_path}},
@@ -1313,7 +1313,7 @@ async def upload_clinic_logo(file: UploadFile = File(...), user = Depends(requir
         shutil.copyfileobj(file.file, buffer)
     
     # Update branding
-    logo_path = f"/uploads/clinic-logos/{filename}"
+    logo_path = f"/api/uploads/clinic-logos/{filename}"
     await db.clinic_branding.update_one(
         {"clinic_id": clinic_id},
         {"$set": {"logo_path": logo_path}},
