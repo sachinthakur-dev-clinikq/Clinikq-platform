@@ -216,8 +216,8 @@ class Appointment(BaseModel):
     patient_id: str
     patient_name: Optional[str] = None
     slot_time: str
-    start_time: str
-    end_time: str
+    start_time: Optional[str] = None  # Phase 3: Made optional for backward compatibility
+    end_time: Optional[str] = None  # Phase 3: Made optional for backward compatibility
     status: str  # booked, confirmed, completed, cancelled, no_show
     is_teleconsult: bool
     created_at: str
