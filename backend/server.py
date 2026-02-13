@@ -205,6 +205,8 @@ class AppointmentCreate(BaseModel):
     patient_id: str
     slot_time: str  # ISO format datetime
     is_teleconsult: bool = False
+    consultation_duration: int = 15  # minutes
+    buffer_duration: int = 5  # minutes
 
 class Appointment(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -213,12 +215,33 @@ class Appointment(BaseModel):
     patient_id: str
     patient_name: Optional[str] = None
     slot_time: str
-    status: str
+    start_time: str
+    end_time: str
+    status: str  # booked, confirmed, completed, cancelled, no_show
     is_teleconsult: bool
     created_at: str
 
 class AppointmentUpdate(BaseModel):
-    status: Optional[Literal["booked", "completed", "cancelled", "no_show"]] = None
+    status: Optional[Literal["booked", "confirmed", "completed", "cancelled", "no_show"]] = None
+
+# Phase 3: Notification Event Models
+class NotificationEvent(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str
+    event_type: str  # appointment_reminder_1day, appointment_reminder_10min, appointment_confirmation
+    appointment_id: str
+    patient_id: str
+    clinic_id: str
+    scheduled_time: str
+    status: str  # pending, sent, failed
+    created_at: str
+
+# Phase 3: Slot Suggestion Models
+class SlotSuggestion(BaseModel):
+    slot_time: str
+    start_time: str
+    end_time: str
+    available: bool
 
 class ClinicSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
