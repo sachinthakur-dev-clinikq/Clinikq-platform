@@ -750,6 +750,122 @@ async def get_clinic_dashboard(user = Depends(require_role("clinic_admin"))):
         total_patients=total_patients
     )
 
+# Phase 3: Enhanced Dashboard with Intelligence
+@api_router.get("/clinic-admin/dashboard/enhanced", response_model=EnhancedDashboardResponse)
+async def get_enhanced_dashboard(user = Depends(require_role("clinic_admin"))):
+    """Phase 3: Enhanced dashboard with today's schedule and recent patients"""
+    clinic_id = user["clinic_id"]
+    now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+    
+    # Basic counts
+    today_appointments = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "slot_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        }
+    })
+    
+    upcoming_appointments = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "slot_time": {"$gte": now.isoformat()},
+        "status": {"$in": ["booked", "confirmed"]}
+    })
+    
+    # Phase 3: Completed today
+    completed_today = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "slot_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        },
+        "status": "completed"
+    })
+    
+    # Phase 3: No-shows today
+    no_shows_today = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "slot_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        },
+        "status": "no_show"
+    })
+    
+    total_patients = await db.patients.count_documents({
+        "clinic_id": clinic_id,
+        "is_active": True
+    })
+    
+    thirty_days_ago = now - timedelta(days=30)
+    new_patients = await db.patients.count_documents({
+        "clinic_id": clinic_id,
+        "created_at": {"$gte": thirty_days_ago.isoformat()}
+    })
+    
+    cancelled_appointments = await db.appointments.count_documents({
+        "clinic_id": clinic_id,
+        "status": "cancelled"
+    })
+    
+    walk_ins_today = await db.walk_ins.count_documents({
+        "clinic_id": clinic_id,
+        "walk_in_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        }
+    })
+    
+    # Phase 3: Today's Schedule (list of today's appointments)
+    todays_appointments = await db.appointments.find({
+        "clinic_id": clinic_id,
+        "slot_time": {
+            "$gte": today_start.isoformat(),
+            "$lt": today_end.isoformat()
+        }
+    }, {"_id": 0}).sort("slot_time", 1).to_list(50)
+    
+    todays_schedule = []
+    for appt in todays_appointments:
+        patient = await db.patients.find_one({"id": appt["patient_id"]}, {"_id": 0})
+        todays_schedule.append(TodayScheduleItem(
+            id=appt["id"],
+            patient_name=patient["name"] if patient else "Unknown",
+            slot_time=appt["slot_time"],
+            status=appt.get("status", "booked"),
+            is_teleconsult=appt.get("is_teleconsult", False)
+        ))
+    
+    # Phase 3: Recent Patients (last 10 added)
+    recent_patients_data = await db.patients.find({
+        "clinic_id": clinic_id,
+        "is_active": True
+    }, {"_id": 0}).sort("created_at", -1).to_list(10)
+    
+    recent_patients = [
+        RecentPatientItem(
+            id=p["id"],
+            name=p["name"],
+            phone=p["phone"],
+            created_at=p["created_at"]
+        ) for p in recent_patients_data
+    ]
+    
+    return EnhancedDashboardResponse(
+        today_appointments=today_appointments,
+        upcoming_appointments=upcoming_appointments,
+        completed_today=completed_today,
+        no_shows_today=no_shows_today,
+        total_patients=total_patients,
+        new_patients=new_patients,
+        cancelled_appointments=cancelled_appointments,
+        walk_ins=walk_ins_today,
+        todays_schedule=todays_schedule,
+        recent_patients=recent_patients
+    )
+
 # Patient Routes
 @api_router.get("/clinic-admin/patients", response_model=List[Patient])
 async def get_patients(user = Depends(require_role("clinic_admin"))):
