@@ -413,7 +413,7 @@ async def get_all_clinics(user = Depends(require_role("super_admin"))):
     clinics = await db.clinics.find({}, {"_id": 0}).to_list(1000)
     return clinics
 
-@api_router.post("/super-admin/clinics", response_model=Clinic)
+@api_router.post("/super-admin/clinics")
 async def create_clinic(clinic: ClinicCreate, user = Depends(require_role("super_admin"))):
     clinic_id = str(uuid.uuid4())
     slug = create_slug(clinic.clinic_name)
@@ -429,7 +429,7 @@ async def create_clinic(clinic: ClinicCreate, user = Depends(require_role("super
     clinic_doc = {
         "id": clinic_id,
         "slug": slug,
-        **clinic.model_dump(),
+        **clinic.model_dump(exclude={"brand_color", "address"}),
         "logo_path": None,
         "subscription_start": now.isoformat(),
         "subscription_expiry": expiry.isoformat(),
@@ -439,18 +439,44 @@ async def create_clinic(clinic: ClinicCreate, user = Depends(require_role("super
     
     await db.clinics.insert_one(clinic_doc)
     
-    # Create default clinic admin user
+    # Phase 2.6: Create branding record upfront
+    branding_doc = {
+        "clinic_id": clinic_id,
+        "display_name": clinic.clinic_name,
+        "brand_color": clinic.brand_color or "#0284C7",
+        "logo_path": None,
+        "address": clinic.address,
+        "contact_phone": clinic.phone,
+        "contact_email": clinic.email
+    }
+    await db.clinic_branding.insert_one(branding_doc)
+    
+    # Phase 2.6: Create clinic admin user with activation token (no password yet)
     admin_id = str(uuid.uuid4())
+    activation_token = str(uuid.uuid4())  # Generate secure token
+    
     admin_doc = {
         "id": admin_id,
         "email": clinic.email,
-        "password": hash_password("clinic@123"),  # Default password
+        "password": None,  # No password yet - pending activation
         "name": clinic.contact_person,
         "role": "clinic_admin",
         "clinic_id": clinic_id,
+        "activation_token": activation_token,
+        "activation_status": "pending",  # pending, active
         "created_at": now.isoformat()
     }
     await db.users.insert_one(admin_doc)
+    
+    # Generate activation link
+    activation_link = f"/clinicpartner/set-password?token={activation_token}"
+    
+    # Mock email sending (console log for now)
+    print(f"=== ACTIVATION EMAIL ===")
+    print(f"To: {clinic.email}")
+    print(f"Subject: Activate Your CliniKQ Account")
+    print(f"Activation Link: {activation_link}")
+    print(f"=======================")
     
     # Create default settings
     settings_doc = {
@@ -466,7 +492,12 @@ async def create_clinic(clinic: ClinicCreate, user = Depends(require_role("super
     }
     await db.clinic_settings.insert_one(settings_doc)
     
-    return Clinic(**clinic_doc)
+    # Return clinic data with activation link
+    return {
+        **Clinic(**clinic_doc).model_dump(),
+        "activation_link": activation_link,
+        "activation_status": "pending"
+    }
 
 @api_router.get("/super-admin/clinics/{clinic_id}", response_model=Clinic)
 async def get_clinic(clinic_id: str, user = Depends(require_role("super_admin"))):
