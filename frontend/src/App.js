@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import '@/App.css';
 
 import Login from './pages/Login';
+import ClinicPartnerLogin from './pages/ClinicPartnerLogin';
+import SetPassword from './pages/SetPassword';
 import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
 import ClinicsList from './pages/SuperAdmin/ClinicsList';
 import CreateClinic from './pages/SuperAdmin/CreateClinic';
@@ -23,6 +25,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
+          
+          {/* Phase 2.6: Clinic Partner Routes */}
+          <Route path="/clinicpartner/clinicloginpage" element={<ClinicPartnerLogin />} />
+          <Route path="/clinicpartner/set-password" element={<SetPassword />} />
           
           {/* Super Admin Routes */}
           <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
