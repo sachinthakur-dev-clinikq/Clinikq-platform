@@ -937,7 +937,7 @@ async def create_appointment(appointment: AppointmentCreate, user = Depends(requ
     
     start_time = slot_datetime
     end_time = start_time + timedelta(minutes=consultation_duration)
-    total_slot_end = end_time + timedelta(minutes=buffer_duration)
+    # Note: buffer_duration is used in slot suggestions to prevent back-to-back bookings
     
     # Phase 3: Check for double booking (prevent overlapping appointments)
     overlapping = await db.appointments.find_one({
