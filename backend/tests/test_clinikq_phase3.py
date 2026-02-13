@@ -368,9 +368,11 @@ class TestPhase3NotificationEvents:
         
         patient_id = patients[0]["id"]
         
-        # Create appointment for 5 days from now (to ensure both reminders are scheduled)
-        future_date = (datetime.now() + timedelta(days=5)).strftime("%Y-%m-%d")
-        slot_time = f"{future_date}T11:00:00+00:00"
+        # Create appointment for 10 days from now at unique time (to ensure both reminders are scheduled)
+        import random
+        future_date = (datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d")
+        random_minute = random.randint(0, 59)
+        slot_time = f"{future_date}T11:{random_minute:02d}:00+00:00"
         
         response = authenticated_clinic_admin.post(
             f"{BASE_URL}/api/clinic-admin/appointments",
