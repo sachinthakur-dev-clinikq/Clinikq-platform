@@ -284,6 +284,15 @@ class DoctorUpdate(BaseModel):
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = None
 
+# Phase 2.6 Models - Activation & Password Setup
+class SetPasswordRequest(BaseModel):
+    token: str
+    password: str
+
+class ActivationTokenResponse(BaseModel):
+    activation_link: str
+    message: str
+
 # Branding Models
 class ClinicBranding(BaseModel):
     clinic_id: str
