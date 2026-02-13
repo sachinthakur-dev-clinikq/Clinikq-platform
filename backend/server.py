@@ -1196,6 +1196,11 @@ async def get_walk_ins(user = Depends(require_role("clinic_admin"))):
 # Include router
 app.include_router(api_router)
 
+# Serve static files (uploaded logos, etc.)
+uploads_dir = ROOT_DIR / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
