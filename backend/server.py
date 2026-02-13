@@ -931,7 +931,12 @@ async def create_appointment(appointment: AppointmentCreate, user = Depends(requ
         raise HTTPException(status_code=404, detail="Patient not found")
     
     # Phase 3: Calculate start and end times
-    slot_datetime = datetime.fromisoformat(appointment.slot_time.replace('Z', '+00:00'))
+    # Parse slot_time and ensure it's timezone-aware
+    slot_time_str = appointment.slot_time.replace('Z', '+00:00')
+    slot_datetime = datetime.fromisoformat(slot_time_str)
+    # Make timezone-aware if naive (assume UTC)
+    if slot_datetime.tzinfo is None:
+        slot_datetime = slot_datetime.replace(tzinfo=timezone.utc)
     consultation_duration = appointment.consultation_duration or 15
     buffer_duration = appointment.buffer_duration or 5
     
