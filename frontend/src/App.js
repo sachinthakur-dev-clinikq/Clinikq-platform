@@ -9,6 +9,7 @@ import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
 import ClinicsList from './pages/SuperAdmin/ClinicsList';
 import CreateClinic from './pages/SuperAdmin/CreateClinic';
 import EditClinic from './pages/SuperAdmin/EditClinic';
+import Notifications from './pages/SuperAdmin/Notifications';
 import ClinicDashboard from './pages/ClinicAdmin/Dashboard';
 import PatientsList from './pages/ClinicAdmin/PatientsList';
 import AddPatient from './pages/ClinicAdmin/AddPatient';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/super-admin/clinics" element={<ClinicsList />} />
           <Route path="/super-admin/clinics/new" element={<CreateClinic />} />
           <Route path="/super-admin/clinics/:id/edit" element={<EditClinic />} />
+          <Route path="/super-admin/notifications" element={<Notifications />} />
           
           {/* Clinic Admin Routes */}
           <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
