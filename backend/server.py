@@ -1451,3 +1451,56 @@ async def startup_db():
         }
         await db.users.insert_one(admin_doc)
         logger.info("Default super admin created: admin@clinikq.com / Admin@123")
+    
+    # Create demo clinic admin if doesn't exist
+    demo_user_exists = await db.users.find_one({"email": "demo@clinic.com"})
+    if not demo_user_exists:
+        now = datetime.now(timezone.utc)
+        clinic_id = str(uuid.uuid4())
+        
+        # Create Demo Clinic
+        demo_clinic = {
+            "id": clinic_id,
+            "clinic_name": "Demo Clinic",
+            "slug": "demo-clinic",
+            "clinic_type": "Clinic",
+            "city": "Demo City",
+            "contact_person": "Demo Admin",
+            "phone": "1234567890",
+            "email": "demo@clinic.com",
+            "logo_path": None,
+            "slot_duration": 20,
+            "subscription_status": "active",
+            "subscription_start": now.isoformat(),
+            "subscription_expiry": (now + timedelta(days=365)).isoformat(),
+            "features": FeatureToggles().model_dump(),
+            "created_at": now.isoformat()
+        }
+        await db.clinics.insert_one(demo_clinic)
+        
+        # Create Demo Clinic Branding
+        demo_branding = {
+            "clinic_id": clinic_id,
+            "display_name": "Demo Clinic",
+            "brand_color": "#0284C7",
+            "logo_path": None,
+            "address": None,
+            "contact_phone": "1234567890",
+            "contact_email": "demo@clinic.com"
+        }
+        await db.clinic_branding.insert_one(demo_branding)
+        
+        # Create Demo User
+        demo_user = {
+            "id": str(uuid.uuid4()),
+            "email": "demo@clinic.com",
+            "password": hash_password("demo123"),
+            "name": "Demo Admin",
+            "role": "clinic_admin",
+            "clinic_id": clinic_id,
+            "created_at": now.isoformat()
+        }
+        await db.users.insert_one(demo_user)
+        
+        print("Demo clinic ready: demo@clinic.com / demo123")
+        logger.info("Demo clinic ready: demo@clinic.com / demo123")
