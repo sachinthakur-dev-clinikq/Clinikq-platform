@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PublicNavbar from '../../components/public/PublicNavbar';
 import PublicFooter from '../../components/public/PublicFooter';
 import { 
-  Calendar, Users, FileText, Bot, Clock, Shield, 
+  Calendar, Users, FileText, Bell, Clock, Shield, 
   ChevronRight, Star, CheckCircle, ArrowRight,
   Stethoscope, Building2, Heart, Activity
 } from 'lucide-react';
@@ -12,10 +12,10 @@ const Home = () => {
   const features = [
     { icon: Calendar, title: 'Smart Scheduling', desc: 'Automated appointment booking with conflict prevention' },
     { icon: Users, title: 'Patient Management', desc: 'Complete patient records and history at your fingertips' },
-    { icon: Bot, title: 'AI Receptionist', desc: 'Handle calls and bookings automatically 24/7' },
+    { icon: Bell, title: 'Automated Reminders', desc: 'SMS & WhatsApp reminders to reduce missed appointments' },
     { icon: FileText, title: 'Digital Records', desc: 'Paperless prescriptions and medical reports' },
-    { icon: Clock, title: 'Queue Management', desc: 'Real-time wait times and smart scheduling' },
-    { icon: Shield, title: 'Data Security', desc: 'HIPAA-compliant secure data storage' },
+    { icon: Clock, title: 'Queue Management', desc: 'Real-time wait times and digital token system' },
+    { icon: Shield, title: 'Data Security', desc: 'Secure, encrypted data storage for patient privacy' },
   ];
 
   const stats = [
@@ -27,7 +27,7 @@ const Home = () => {
 
   const testimonials = [
     { name: 'Dr. Priya Sharma', role: 'Cardiologist, Mumbai', text: 'CliniKQ transformed how we manage our clinic. Patient wait times reduced by 60%.', avatar: 'PS' },
-    { name: 'Dr. Rajesh Kumar', role: 'Pediatrician, Delhi', text: 'The AI receptionist handles 80% of our appointment calls. Game changer!', avatar: 'RK' },
+    { name: 'Dr. Rajesh Kumar', role: 'Pediatrician, Delhi', text: 'The automated reminders cut our no-shows by half. Huge time saver!', avatar: 'RK' },
     { name: 'Dr. Anita Desai', role: 'Dermatologist, Bangalore', text: 'Finally, a system built for Indian clinics. Intuitive and powerful.', avatar: 'AD' },
   ];
 
@@ -44,14 +44,14 @@ const Home = () => {
           <h1>Run Your Clinic —<br /><span className="gradient-text">Not the Chaos</span></h1>
           <p className="hero-subtitle">
             Appointments, Patients, Billing, Staff, Reports — All in One Platform.
-            Powered by AI to handle the busywork while you focus on patient care.
+            Built to handle the busywork while you focus on patient care.
           </p>
           <div className="hero-cta">
             <Link to="/contact" className="btn-primary-large">
               Book a Free Demo <ArrowRight size={18} />
             </Link>
-            <Link to="/ai-demo" className="btn-secondary-large">
-              Try AI Receptionist
+            <Link to="/features" className="btn-secondary-large">
+              View All Features
             </Link>
           </div>
           <div className="hero-trust">
@@ -110,7 +110,7 @@ const Home = () => {
           <div className="section-header">
             <span className="section-badge">Features</span>
             <h2>Everything You Need to Run a Modern Clinic</h2>
-            <p>From appointment scheduling to AI-powered patient management — we've got you covered.</p>
+            <p>From appointment scheduling to automated patient management — we've got you covered.</p>
           </div>
           <div className="features-grid">
             {features.map((feature, i) => (
@@ -131,40 +131,40 @@ const Home = () => {
         </div>
       </section>
 
-      {/* AI Demo Section */}
+      {/* Automation Section */}
       <section className="ai-section">
         <div className="section-container">
           <div className="ai-content">
-            <span className="section-badge purple">AI Powered</span>
-            <h2>Meet Your AI Receptionist</h2>
-            <p>Handle patient calls, book appointments, send reminders, and manage queries — all automatically. Available 24/7, never takes a break.</p>
+            <span className="section-badge purple">Automation</span>
+            <h2>Automate the Busy Work</h2>
+            <p>Reduce manual tasks with smart automation. From appointment reminders to follow-up scheduling — let CliniKQ handle the routine so you can focus on patients.</p>
             <ul className="ai-features">
-              <li><CheckCircle size={18} /> Answers calls in local languages</li>
-              <li><CheckCircle size={18} /> Books & reschedules appointments</li>
-              <li><CheckCircle size={18} /> Sends automated reminders</li>
-              <li><CheckCircle size={18} /> Handles common patient queries</li>
+              <li><CheckCircle size={18} /> Automated SMS & WhatsApp reminders</li>
+              <li><CheckCircle size={18} /> Online booking via shared links & QR codes</li>
+              <li><CheckCircle size={18} /> Smart follow-up scheduling</li>
+              <li><CheckCircle size={18} /> Reusable prescription templates</li>
             </ul>
-            <Link to="/ai-demo" className="btn-primary-large">
-              Experience AI Demo <ArrowRight size={18} />
+            <Link to="/features" className="btn-primary-large">
+              Explore All Features <ArrowRight size={18} />
             </Link>
           </div>
           <div className="ai-visual">
             <div className="ai-chat-preview">
-              <div className="chat-message incoming">
-                <span className="chat-avatar">P</span>
-                <div className="chat-bubble">"Hello, I'd like to book an appointment with Dr. Sharma for tomorrow."</div>
-              </div>
               <div className="chat-message outgoing">
-                <div className="chat-bubble">"Of course! Dr. Sharma has slots available at 10:30 AM and 2:00 PM tomorrow. Which would you prefer?"</div>
-                <span className="chat-avatar ai">AI</span>
+                <div className="chat-bubble">Reminder: You have an appointment with Dr. Sharma tomorrow at 2:00 PM</div>
+                <span className="chat-avatar ai">CQ</span>
               </div>
               <div className="chat-message incoming">
                 <span className="chat-avatar">P</span>
-                <div className="chat-bubble">"2 PM works for me."</div>
+                <div className="chat-bubble">Thanks! Can I reschedule to 4 PM instead?</div>
               </div>
               <div className="chat-message outgoing">
-                <div className="chat-bubble">"Your appointment is confirmed for tomorrow at 2:00 PM. You'll receive a confirmation SMS shortly."</div>
-                <span className="chat-avatar ai">AI</span>
+                <div className="chat-bubble">Done! Your appointment has been rescheduled to 4:00 PM. Updated confirmation sent.</div>
+                <span className="chat-avatar ai">CQ</span>
+              </div>
+              <div className="chat-message outgoing">
+                <div className="chat-bubble">Follow-up reminder: Your diabetes checkup is due next week. Book now?</div>
+                <span className="chat-avatar ai">CQ</span>
               </div>
             </div>
           </div>

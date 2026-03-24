@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import PublicNavbar from '../../components/public/PublicNavbar';
 import PublicFooter from '../../components/public/PublicFooter';
 import { 
-  Calendar, Users, FileText, Bot, Clock, Shield, 
+  Calendar, Users, FileText, Clock, 
   BarChart3, Bell, CreditCard, Smartphone, Globe, 
-  Video, MessageSquare, Clipboard, PieChart, Settings,
+  Link2, MessageSquare, Clipboard, RefreshCw, Settings,
   CheckCircle, ArrowRight
 } from 'lucide-react';
 
@@ -15,9 +15,9 @@ const Features = () => {
       title: 'Appointment Management',
       icon: Calendar,
       features: [
-        { name: 'Smart Scheduling', desc: 'AI-powered slot suggestions with conflict prevention', icon: Calendar },
-        { name: 'Online Booking', desc: 'Patients book directly via website or WhatsApp', icon: Globe },
-        { name: 'Automated Reminders', desc: 'SMS, WhatsApp & email reminders reduce no-shows', icon: Bell },
+        { name: 'Smart Scheduling', desc: 'Intelligent slot suggestions with conflict prevention', icon: Calendar },
+        { name: 'Online Booking Links', desc: 'Patients book via shared link or QR code', icon: Link2 },
+        { name: 'Automated Reminders', desc: 'SMS & WhatsApp reminders reduce no-shows', icon: Bell },
         { name: 'Queue Management', desc: 'Real-time wait times and digital token system', icon: Clock },
       ]
     },
@@ -32,13 +32,13 @@ const Features = () => {
       ]
     },
     {
-      title: 'AI & Automation',
-      icon: Bot,
+      title: 'Productivity & Automation',
+      icon: RefreshCw,
       features: [
-        { name: 'AI Receptionist', desc: '24/7 call handling, booking & query resolution', icon: Bot },
-        { name: 'Smart Notifications', desc: 'Automated follow-ups and health reminders', icon: MessageSquare },
-        { name: 'Voice Commands', desc: 'Hands-free note taking during consultations', icon: Video },
-        { name: 'Predictive Analytics', desc: 'AI-powered insights for better decisions', icon: PieChart },
+        { name: 'Automated Reminders', desc: 'SMS/WhatsApp reminders to reduce missed appointments', icon: Bell },
+        { name: 'Smart Templates', desc: 'Reusable prescription and note templates to save time', icon: FileText },
+        { name: 'Follow-up Management', desc: 'Track and schedule patient follow-ups easily', icon: RefreshCw },
+        { name: 'Quick Notifications', desc: 'Automated follow-ups and health reminders', icon: MessageSquare },
       ]
     },
     {

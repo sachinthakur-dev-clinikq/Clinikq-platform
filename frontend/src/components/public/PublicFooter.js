@@ -12,7 +12,7 @@ const PublicFooter = () => {
               <Activity size={28} />
               <span>CliniKQ</span>
             </div>
-            <p>Empowering clinics with intelligent operational tools. From appointments to AI — we handle the chaos so you can focus on care.</p>
+            <p>Empowering clinics with smart operational tools. From appointments to automation — we handle the chaos so you can focus on care.</p>
             <div className="footer-social">
               <a href="#" aria-label="LinkedIn"><Linkedin size={20} /></a>
               <a href="#" aria-label="Twitter"><Twitter size={20} /></a>
@@ -24,7 +24,7 @@ const PublicFooter = () => {
             <Link to="/features">Features</Link>
             <Link to="/how-it-works">How It Works</Link>
             <Link to="/pricing">Pricing</Link>
-            <Link to="/ai-demo">AI Receptionist</Link>
+            <Link to="/specialties">Specialties</Link>
           </div>
 
           <div className="footer-links">
