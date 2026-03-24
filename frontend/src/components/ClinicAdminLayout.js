@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut, Stethoscope, Palette } from 'lucide-react';
+import { Activity, LayoutDashboard, Users, Calendar, Settings, LogOut, Stethoscope, Palette, BarChart3 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../api';
 
@@ -69,6 +69,10 @@ const ClinicAdminLayout = ({ children }) => {
           <NavLink data-testid="nav-branding" to="/clinic/branding" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             <Palette size={18} style={{ marginRight: '0.75rem' }} />
             Branding
+          </NavLink>
+          <NavLink data-testid="nav-reports" to="/clinic/reports" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            <BarChart3 size={18} style={{ marginRight: '0.75rem' }} />
+            Reports
           </NavLink>
           <NavLink data-testid="nav-settings" to="/clinic/settings" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
             <Settings size={18} style={{ marginRight: '0.75rem' }} />

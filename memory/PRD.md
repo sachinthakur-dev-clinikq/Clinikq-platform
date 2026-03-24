@@ -1,151 +1,219 @@
-# CliniKQ - Multi-Tenant Clinic Operational Platform
+# CliniKQ - Complete Production-Style Clinic Operational Platform
 
-## Original Problem Statement
-Build a multi-tenant, white-label clinic operational platform named "CliniKQ" with the following phased development:
-- **Phase 1:** Super Admin Panel & Core Backend
-- **Phase 2:** Clinic Engage Layer (Dashboard, Patient/Doctor Management, Branding)
-- **Phase 2.5:** UX Upgrade (White-label login, Inline patient creation)
-- **Phase 2.6:** White-Label Onboarding Flow (Branded login URL, Sidebar logo, Password activation)
-- **Phase 3:** Clinic Workflow Engine Upgrade (Smart Appointment Engine, Dashboard Intelligence)
+## Overview
+CliniKQ is a multi-tenant clinic operational platform for OPD clinics, healthcare centers, and small hospitals. This is a complete sales-ready system with a public marketing website, working clinic platform, and AI receptionist simulation.
 
-## User Personas
-1. **Super Admin** - Platform administrator managing all clinics
-2. **Clinic Admin** - Individual clinic staff managing patients/appointments
+## What's Been Built
 
-## Core Requirements
-- Multi-tenant architecture with tenant isolation by clinic_id
-- White-label branding support (logo, colors, custom login pages)
-- Appointment management with smart scheduling
-- Patient management
-- Doctor/Staff management
+### 1. Public Marketing Website
+Premium healthcare SaaS website with:
 
-## What's Been Implemented
+**Pages:**
+- **Home** (`/`) - Hero section, stats, features, testimonials, CTA
+- **Features** (`/features`) - Detailed feature categories and descriptions
+- **How It Works** (`/how-it-works`) - 4-step onboarding process
+- **Specialties** (`/specialties`) - 12+ medical specialties supported
+- **Pricing** (`/pricing`) - 3 pricing tiers (Starter, Professional, Enterprise)
+- **About** (`/about`) - Company story, values, team, timeline
+- **Contact** (`/contact`) - Demo request form, contact methods
+- **AI Demo** (`/ai-demo`) - Interactive AI receptionist simulation
 
-### Phase 1 (Complete)
-- Super Admin authentication and dashboard
-- Clinic CRUD operations
-- Core backend architecture (FastAPI + MongoDB)
-- JWT-based role authentication
+**Design:**
+- Purple/white professional healthcare palette
+- Mobile responsive
+- Gradient CTAs and modern UI components
+- Trust indicators and social proof
 
-### Phase 2 (Complete)
-- Clinic Admin panel with dashboard
-- Patient management (CRUD)
-- Appointment booking system
+### 2. Super Admin Panel
+Full platform management:
+
+**Features:**
+- Dashboard with platform metrics (total/active/trial clinics, appointments)
+- Create/Edit/Delete clinics
+- Manage subscriptions and feature toggles
+- View clinic statistics
+- Notifications placeholder
+
+**Routes:**
+- `/super-admin/dashboard`
+- `/super-admin/clinics`
+- `/super-admin/clinics/new`
+- `/super-admin/clinics/:id/edit`
+- `/super-admin/notifications`
+
+### 3. Clinic Admin Panel
+Complete clinic operations:
+
+**Features:**
+- Dashboard with metrics (appointments, patients, no-shows, cancellations)
+- Patient management (CRUD operations)
+- Appointment booking with double-booking prevention
 - Doctor management
-- Branding settings page
+- Branding settings (logo upload, colors)
+- Reports & Analytics
+- Settings (WhatsApp, teleconsult toggles)
 
-### Phase 2.5 (Complete)
-- White-label login page (`/clinicpartner/clinicloginpage`)
-- Inline patient creation modal
+**Routes:**
+- `/clinic/dashboard`
+- `/clinic/patients`
+- `/clinic/patients/new`
+- `/clinic/appointments`
+- `/clinic/appointments/new`
+- `/clinic/doctors`
+- `/clinic/branding`
+- `/clinic/reports`
+- `/clinic/settings`
 
-### Phase 2.6 (Complete)
-- Password activation flow with tokens
-- Set Password page (`/clinicpartner/set-password`)
-- Sidebar logo display (with /api/uploads route fix)
-- Static file serving for uploaded assets
+### 4. AI Receptionist Simulation
+Interactive demo showing how AI receptionist works:
 
-### Phase 3 Backend (Complete - Feb 13, 2026)
-- **Smart Appointment Engine:**
-  - Auto slot calculation (start_time, end_time)
-  - Double-booking prevention
-  - Status ENUM: booked, confirmed, completed, cancelled, no_show
-- **Notification Engine Foundation:**
-  - Creates notification events (T-1 day, T-10 min) in `notification_events` collection
-- **Enhanced Dashboard:**
-  - GET `/api/clinic-admin/dashboard/enhanced`
-  - Completed Today, No-shows Today counts
-  - Today's Schedule list
-  - Recent Patients list
-- **Available Slots Endpoint:**
-  - GET `/api/clinic-admin/appointments/available-slots?date=YYYY-MM-DD`
-  - Returns 21 slots per day (9 AM - 6 PM, 25-min intervals)
+**Scenarios:**
+1. New Appointment Booking
+2. Appointment Rescheduling
+3. General Inquiry
 
-## Technical Architecture
+**Features:**
+- Phone UI simulation
+- Scripted conversation playback
+- Typing indicators
+- Multiple scenario selection
+- AI capabilities showcase
 
-### Backend
-- **Framework:** FastAPI (Python)
-- **Database:** MongoDB (Motor async driver)
-- **Auth:** JWT tokens with role-based access (super_admin, clinic_admin)
-- **File Storage:** Local uploads at `/app/backend/uploads/`
-- **Static Files:** Served at `/api/uploads/*` route
+### 5. Authentication System
+- JWT-based authentication
+- Role-based access (super_admin, clinic_admin)
+- White-label login pages for clinics
+- Password activation flow for new clinics
 
-### Frontend
-- **Framework:** React.js
-- **Styling:** Tailwind CSS
-- **Components:** Shadcn UI
-- **HTTP Client:** Axios
+## Demo Credentials
 
-### Key Files
-- `backend/server.py` - Monolithic API (all routes, models, logic)
-- `frontend/src/App.js` - Route definitions
-- `frontend/src/components/ClinicAdminLayout.js` - Clinic portal layout
-- `frontend/src/pages/SetPassword.js` - Activation flow
+| Role | Email | Password |
+|------|-------|----------|
+| Super Admin | admin@clinikq.com | Admin@123 |
+| Demo Clinic | demo@clinic.com | demo123 |
+
+## Technical Stack
+
+**Backend:**
+- FastAPI (Python)
+- MongoDB (Motor async driver)
+- JWT authentication
+- BCrypt password hashing
+
+**Frontend:**
+- React.js
+- Custom CSS (no framework)
+- Lucide React icons
+- React Router DOM
 
 ## Key API Endpoints
 
 ### Authentication
-- POST `/api/auth/login`
-- GET `/api/auth/me`
-- POST `/api/public/set-password`
-- GET `/api/public/verify-token/{token}`
-
-### Clinic Admin
-- GET `/api/clinic-admin/dashboard`
-- GET `/api/clinic-admin/dashboard/enhanced` (Phase 3)
-- GET `/api/clinic-admin/appointments/available-slots` (Phase 3)
-- GET/POST `/api/clinic-admin/patients`
-- GET/POST `/api/clinic-admin/appointments`
-- GET/POST `/api/clinic-admin/doctors`
-- GET/PUT `/api/clinic-admin/branding`
-- POST `/api/clinic-admin/branding/logo`
-- GET `/api/clinic-admin/my-branding`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `POST /api/public/set-password`
+- `GET /api/public/verify-token/{token}`
+- `GET /api/public/clinic-branding/{slug}`
 
 ### Super Admin
-- GET `/api/super-admin/dashboard`
-- GET/POST `/api/super-admin/clinics`
-- PUT `/api/super-admin/clinics/{id}`
+- `GET /api/super-admin/dashboard`
+- `GET /api/super-admin/clinics`
+- `POST /api/super-admin/clinics`
+- `PUT /api/super-admin/clinics/{id}`
+- `GET /api/super-admin/clinics/{id}/stats`
+
+### Clinic Admin
+- `GET /api/clinic-admin/dashboard`
+- `GET/POST /api/clinic-admin/patients`
+- `PUT /api/clinic-admin/patients/{id}`
+- `GET/POST /api/clinic-admin/appointments`
+- `PUT /api/clinic-admin/appointments/{id}`
+- `GET /api/clinic-admin/appointments/available-slots`
+- `GET/POST /api/clinic-admin/doctors`
+- `GET/PUT /api/clinic-admin/branding`
+- `POST /api/clinic-admin/branding/logo`
+- `GET/PUT /api/clinic-admin/settings`
 
 ## Database Collections
-- `users` - All users (super_admin, clinic_admin)
+- `users` - Authentication data
 - `clinics` - Clinic entities
 - `patients` - Patient records (tenant-scoped)
 - `appointments` - Appointment bookings
 - `doctors` - Doctor/staff records
 - `clinic_branding` - White-label settings
-- `clinic_settings` - Clinic configuration
-- `notification_events` - Scheduled reminders (Phase 3)
+- `clinic_settings` - Feature toggles
 
-## Test Credentials
-- **Super Admin:** admin@clinikq.com / Admin@123
-- **Clinic Admin (with logo):** rajesh@healthcareplus.com / Clinic@123
-- **Pending Activation:** sachin@bharatsure.com / token: cbd0d7a5-d24b-4076-9f9d-48264b8234af
+## Sample Data
+The demo clinic includes:
+- 10 patients with realistic Indian names
+- 3 doctors (General Physician, Pediatrician, Cardiologist)
+- 15 appointments (past, today, upcoming)
 
-## Backlog / Future Tasks
+## File Structure
 
-### P0 - Next Priority
-- None currently
+```
+/app/
+├── backend/
+│   ├── server.py          # Complete FastAPI backend
+│   └── uploads/           # Logo uploads
+├── frontend/
+│   └── src/
+│       ├── api.js         # Axios configuration
+│       ├── App.js         # Route definitions
+│       ├── App.css        # Admin panel styles
+│       ├── styles/
+│       │   └── public.css # Public website styles
+│       ├── hooks/
+│       │   └── useAuth.js # Authentication hook
+│       ├── components/
+│       │   ├── ClinicAdminLayout.js
+│       │   ├── SuperAdminLayout.js
+│       │   └── public/
+│       │       ├── PublicNavbar.js
+│       │       └── PublicFooter.js
+│       └── pages/
+│           ├── Public/    # Marketing website pages
+│           ├── SuperAdmin/# Super admin pages
+│           └── ClinicAdmin/# Clinic admin pages
+└── memory/
+    └── PRD.md             # This document
+```
 
-### P1 - Upcoming
-- Frontend integration for available-slots API (auto-suggest in BookAppointment page)
-- Status dropdown with color-coding in appointment list
-- Dashboard UI redesign to show enhanced metrics
+## What's Mocked
 
-### P2 - Future
-- AI Receptionist and telephony integration
-- WhatsApp API integration
-- Payment gateway integration
-- Kiosk mode functionality
-- Pharmacy API integration
-- Backend refactoring (split server.py into modules)
+- Email sending (console log only)
+- Subdomain routing (uses query params)
+- SMS/WhatsApp notifications
+- Payment processing
+- Advanced analytics charts
 
-## Mocked Features
-- Email sending (logged to console only)
-- Subdomain routing (uses query params like `?clinic=slug`)
-- Missed Calls, Website Visits metrics (placeholder)
+## Future Enhancements
 
-## Known Issues
-- None critical. All Phase 2.6 bugs fixed.
+### Priority 1 (P1)
+- Real email integration
+- SMS/WhatsApp notifications
+- Stripe payment integration
+- Advanced reporting with charts
 
-## Test Reports
-- `/app/test_reports/iteration_2.json` - Latest test results
-- `/app/backend/tests/test_clinikq_phase3.py` - Pytest test file
+### Priority 2 (P2)
+- Real AI receptionist (Twilio + OpenAI)
+- Multi-branch support
+- Inventory management
+- Patient mobile app
+
+### Priority 3 (P3)
+- Kiosk mode
+- Pharmacy integration
+- Insurance billing
+- Telemedicine video calls
+
+## URLs
+- Home: `/`
+- Login: `/login`
+- AI Demo: `/ai-demo`
+- Super Admin: `/super-admin/dashboard`
+- Clinic Admin: `/clinic/dashboard`
+- White-label Login: `/clinicpartner/clinicloginpage?clinic=demo-clinic`
+
+---
+Last Updated: March 24, 2026

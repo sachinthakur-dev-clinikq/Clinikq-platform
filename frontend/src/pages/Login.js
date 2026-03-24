@@ -138,7 +138,8 @@ const Login = () => {
         {!isWhiteLabel && (
           <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'hsl(210, 40%, 98%)', borderRadius: '0.375rem', fontSize: '0.8125rem', color: 'hsl(215, 16%, 47%)' }}>
             <strong>Demo Credentials:</strong><br />
-            Super Admin: admin@clinikq.com / Admin@123
+            Super Admin: admin@clinikq.com / Admin@123<br />
+            Demo Clinic: demo@clinic.com / demo123
           </div>
         )}
 
